@@ -609,7 +609,7 @@
   function initAudio(){
     ac=new (window.AudioContext||window.webkitAudioContext)();
     an=ac.createAnalyser(); an.fftSize=64; an.smoothingTimeConstant=.75;
-    master=ac.createGain(); master.gain.value=.55;
+    master=ac.createGain(); master.gain.value=.9;
     master.connect(an); an.connect(ac.destination);
   }
   function kick(t){
