@@ -65,14 +65,16 @@
   @media(max-width:640px){.hero .hero-id{font-size:.85rem}}
   .hero h1{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;font-size:clamp(3rem,12vw,9.5rem);line-height:.92;letter-spacing:.01em}
   .hero h1 .line{display:block;overflow:hidden}
-  .hero h1 .line>span{display:inline-block;transform:translateY(110%);transition:transform .9s cubic-bezier(.22,1,.36,1)}
+  .hero h1 .line>span{display:inline-block;transition:transform .9s cubic-bezier(.22,1,.36,1)}
+  html.js body:not(.loaded) .hero h1 .line>span{transform:translateY(110%)}
   body.loaded .hero h1 .line>span{transform:translateY(0)}
   .hero h1 .line:nth-child(2)>span{transition-delay:.1s}
   .hero h1 .line:nth-child(3)>span{transition-delay:.2s}
   .hero h1 .red{color:var(--red)}
   .hero h1 .serif{font-family:'Playfair Display',serif;font-style:italic;font-weight:600;text-transform:none;letter-spacing:0}
   .hero .strip{display:flex;flex-wrap:wrap;gap:30px;margin-top:52px;padding-top:24px;border-top:1px solid rgba(217,203,168,.25)}
-  .hero .strip .cell{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;opacity:0;transform:translateY(16px);transition:all .6s ease}
+  .hero .strip .cell{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;transition:all .6s ease}
+  html.js body:not(.loaded) .hero .strip .cell{opacity:0;transform:translateY(16px)}
   body.loaded .hero .strip .cell{opacity:.9;transform:none}
   .hero .strip .cell:nth-child(2){transition-delay:.08s}
   .hero .strip .cell:nth-child(3){transition-delay:.16s}
@@ -91,7 +93,8 @@
   @keyframes scrollx{to{transform:translateX(-50%)}}
 
   /* ---------- Reveal on scroll ---------- */
-  .reveal{opacity:0;transform:translateY(42px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1)}
+  .reveal{transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1)}
+  html.js .reveal:not(.in){opacity:0;transform:translateY(42px)}
   .reveal.in{opacity:1;transform:none}
 
   /* ---------- Sections ---------- */
@@ -196,7 +199,7 @@
   .do .more{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.22,1,.36,1),margin .45s;font-size:.92rem;opacity:.9}
   .do.open .more{max-height:140px;margin-top:16px}
   /* staggered entrance */
-  .do-grid .do{opacity:0;transform:translateY(30px)}
+  html.js .do-grid:not(.in) .do{opacity:0;transform:translateY(30px)}
   .do-grid.in .do{opacity:1;transform:none;transition:opacity .7s ease,transform .7s cubic-bezier(.22,1,.36,1),background .3s}
   .do-grid.in .do:nth-child(2){transition-delay:.15s}
   .do-grid.in .do:nth-child(3){transition-delay:.3s}
@@ -282,7 +285,16 @@
 </head>
 <body>
 
-<div id="loader"><div class="word"><span>GAURANSH&reg;</span></div></div>
+<div id="loader"><div class="word"><span>GAURANSH ARORA</span></div></div>
+<script>
+  // Failsafe: runs independently of the main script — the loader can never get stuck
+  document.documentElement.classList.add('js');
+  setTimeout(function(){
+    var l=document.getElementById('loader');
+    if(l) l.classList.add('done');
+    document.body.classList.add('loaded');
+  },1800);
+</script>
 <div id="progress"></div>
 <div id="cursor"></div>
 <button id="sound" title="Toggle music"><canvas id="viz" width="68" height="32"></canvas><span class="slabel" id="slabel">Play</span></button>
@@ -725,4 +737,83 @@
       p.addEventListener('mousemove',e=>{
         const r=p.getBoundingClientRect();
         const rx=((e.clientY-r.top)/r.height-.5)*-5;
-    
+        const ry=((e.clientX-r.left)/r.width-.5)*5;
+        p.style.transform=`perspective(700px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      });
+      p.addEventListener('mouseleave',()=>{p.style.transform=''});
+    }
+  });
+
+  // Live rotating 3D graph (saddle surface z = x² − y²) in the Study panel
+  const mcv=document.getElementById('mathcv');
+  if(mcv){
+    const mx=mcv.getContext('2d');
+    let ang=0;
+    const N=9, range=1.6, tilt=1.05;
+    function proj(x,y,z){
+      const ca=Math.cos(ang), sa=Math.sin(ang);
+      const rx=x*ca - y*sa, ry=x*sa + y*ca;
+      const px=rx, py=ry*Math.cos(tilt) - z*Math.sin(tilt);
+      return [mcv.width/2 + px*52, mcv.height/2 + py*34];
+    }
+    function zf(x,y){ return (x*x - y*y)*.28; }
+    function drawMath(){
+      mx.clearRect(0,0,mcv.width,mcv.height);
+      mx.lineWidth=1;
+      for(let i=0;i<N;i++){
+        const x=-range + 2*range*i/(N-1);
+        mx.strokeStyle = (i===Math.floor(N/2)) ? '#e3391c' : 'rgba(20,18,16,.55)';
+        mx.beginPath();
+        for(let j=0;j<N;j++){
+          const y=-range + 2*range*j/(N-1);
+          const [px,py]=proj(x,y,zf(x,y));
+          j?mx.lineTo(px,py):mx.moveTo(px,py);
+        }
+        mx.stroke();
+      }
+      for(let j=0;j<N;j++){
+        const y=-range + 2*range*j/(N-1);
+        mx.strokeStyle = (j===Math.floor(N/2)) ? '#e3391c' : 'rgba(20,18,16,.55)';
+        mx.beginPath();
+        for(let i=0;i<N;i++){
+          const x=-range + 2*range*i/(N-1);
+          const [px,py]=proj(x,y,zf(x,y));
+          i?mx.lineTo(px,py):mx.moveTo(px,py);
+        }
+        mx.stroke();
+      }
+      // label
+      mx.fillStyle='rgba(20,18,16,.7)';
+      mx.font='10px "Space Mono",monospace';
+      mx.fillText('z = x² − y²',8,14);
+      ang+=.009;
+      requestAnimationFrame(drawMath);
+    }
+    drawMath();
+  }
+
+  // Code type-out in the Build panel
+  const codeEl=document.getElementById('typecode');
+  const codeLines=['> agent.train(episodes=150_000)','  reward: 0.94  ↑','> git push origin main','  deployed ✓  numdle-game.pages.dev'];
+  let typed=false;
+  const codeIO=new IntersectionObserver(es=>{
+    es.forEach(en=>{
+      if(en.isIntersecting && !typed){
+        typed=true; codeIO.disconnect();
+        let li=0, ch=0, out='';
+        (function typeStep(){
+          if(li>=codeLines.length){codeEl.innerHTML=out+'<span class="cur"></span>';return;}
+          out+=codeLines[li][ch];
+          codeEl.innerHTML=out+'<span class="cur"></span>';
+          ch++;
+          if(ch>=codeLines[li].length){out+='\n';li++;ch=0;setTimeout(typeStep,240);}
+          else setTimeout(typeStep,26);
+        })();
+      }
+    });
+  },{threshold:.4});
+  codeIO.observe(codeEl);
+</script>
+
+</body>
+</html>
