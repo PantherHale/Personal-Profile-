@@ -278,6 +278,14 @@
   #sound .slabel{font-family:var(--mono);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:#fff;opacity:.8}
   @media(max-width:760px){#sound{bottom:18px;right:18px;width:54px;height:54px}}
 
+  /* ---------- Support (Ko-fi) button ---------- */
+  #kofi{position:fixed;bottom:26px;left:26px;z-index:81;width:64px;height:64px;border-radius:50%;background:var(--ink);border:1px solid rgba(217,203,168,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .25s,background .25s}
+  #kofi:hover{transform:scale(1.1);background:var(--red);text-decoration:none}
+  #kofi .cup{font-size:1.25rem;line-height:1;animation:steam 2.4s ease-in-out infinite}
+  @keyframes steam{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  #kofi .klabel{font-family:var(--mono);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:#fff;opacity:.85}
+  @media(max-width:760px){#kofi{bottom:18px;left:18px;width:54px;height:54px}}
+
   footer{padding:26px 44px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;opacity:.7}
   #totop{border:none;background:none;font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink)}
   #totop:hover{color:var(--red)}
@@ -298,6 +306,7 @@
 <div id="progress"></div>
 <div id="cursor"></div>
 <button id="sound" title="Toggle music"><canvas id="viz" width="68" height="32"></canvas><span class="slabel" id="slabel">Play</span></button>
+<a id="kofi" href="https://ko-fi.com/panther14" target="_blank" rel="noopener" title="Buy Panther a coffee"><span class="cup">&#9749;</span><span class="klabel">Support</span></a>
 <canvas class="sideviz left" id="vizL"></canvas>
 <canvas class="sideviz right" id="vizR"></canvas>
 
