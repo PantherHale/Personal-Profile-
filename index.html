@@ -6,7 +6,7 @@
 <title>Gauransh — Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;1,400&family=Oswald:wght@500;600;700&family=Playfair+Display:ital,wght@1,500;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;1,400&family=Oswald:wght@500;600;700&family=Playfair+Display:ital,wght@1,500;1,600&family=Space+Mono:wght@400;700&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   :root{
     --cream:#d9cba8; --cream2:#cfc09a; --ink:#141210; --red:#e3391c;
@@ -28,15 +28,22 @@
   /* ---------- Loader ---------- */
   #loader{position:fixed;inset:0;background:var(--ink);z-index:100;display:flex;align-items:center;justify-content:center;transition:transform .8s cubic-bezier(.77,0,.18,1)}
   #loader.done{transform:translateY(-100%)}
-  #loader .word{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;color:var(--cream);font-size:clamp(2rem,8vw,5rem);letter-spacing:.04em;overflow:hidden}
+  .lwin{width:min(540px,92vw);border:3px solid var(--cream);box-shadow:8px 8px 0 rgba(217,203,168,.25)}
+  .lbar{background:var(--cream);color:var(--ink);font-family:'Press Start 2P',monospace;font-size:.55rem;padding:9px 12px;display:flex;justify-content:space-between;align-items:center}
+  .lbody{padding:30px 26px}
+  #loader .word{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;color:var(--cream);font-size:clamp(1.6rem,5.5vw,3rem);letter-spacing:.04em;overflow:hidden}
   #loader .word span{display:inline-block;transform:translateY(110%);animation:rise .7s cubic-bezier(.22,1,.36,1) forwards}
   @keyframes rise{to{transform:translateY(0)}}
+  .ltext{font-family:'VT323',monospace;color:var(--cream);opacity:.85;font-size:1.15rem;margin:12px 0 10px}
+  .lprog{height:16px;border:2px solid var(--cream);padding:2px}
+  .lprog i{display:block;height:100%;width:0;background:var(--red)}
+  #dots{position:fixed;inset:0;z-index:-1;pointer-events:none}
 
   /* ---------- Scroll progress ---------- */
   #progress{position:fixed;top:0;left:0;height:3px;background:var(--red);width:0;z-index:60}
 
   /* ---------- Custom cursor ---------- */
-  #cursor{position:fixed;width:32px;height:32px;border-radius:50%;background:var(--red);pointer-events:none;z-index:90;transform:translate(-50%,-50%);transition:width .25s,height .25s,opacity .25s;mix-blend-mode:difference;opacity:0}
+  #cursor{position:fixed;width:32px;height:32px;border-radius:50%;background:var(--red);pointer-events:none;z-index:130;transform:translate(-50%,-50%);transition:width .25s,height .25s,opacity .25s;mix-blend-mode:difference;opacity:0}
   body.has-cursor #cursor{opacity:1}
   #cursor.hovering{width:84px;height:84px}
   @media(hover:none){#cursor{display:none}}
@@ -81,6 +88,9 @@
   .hero .strip .cell:nth-child(4){transition-delay:.24s}
   .hero .strip .cell:nth-child(5){transition-delay:.32s}
   .hero .strip .cell b{display:block;font-size:.95rem;letter-spacing:.12em;margin-top:4px}
+  .rotator{margin-top:30px;font-family:var(--mono);font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cream);opacity:.85}
+  .rotator .pfx{color:var(--red)}
+  .rotator .rcur{color:var(--red);animation:blink 1s steps(1) infinite}
   .scroll-hint{position:absolute;right:44px;bottom:34px;width:56px;height:56px;border:1px solid rgba(217,203,168,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:bob 2.2s ease-in-out infinite;font-size:1.1rem}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
   @media(max-width:760px){.scroll-hint{display:none}}
@@ -243,9 +253,13 @@
     88%{transform:rotate(6deg)}
     100%{transform:rotate(-65deg)}
   }
-  .knight{position:absolute;right:8px;bottom:4px;font-size:2.4rem;line-height:1;transform-origin:bottom center}
+  .knight{position:absolute;right:8px;bottom:4px;font-size:2.4rem;line-height:1;transform-origin:bottom center;cursor:pointer}
   .do-grid.in .knight{animation:rock 2.4s ease-in-out infinite}
   @keyframes rock{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+  .do-grid.in .knight.hopping{animation:hop .55s ease}
+  @keyframes hop{0%,100%{transform:translateY(0) rotate(-8deg)}40%{transform:translateY(-24px) rotate(12deg)}70%{transform:translateY(-4px) rotate(-4deg)}}
+  .bubble{position:absolute;right:0;bottom:62px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;padding:10px 14px;border-radius:10px 10px 0 10px;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;max-width:190px;z-index:3}
+  .bubble.show{opacity:1;transform:none}
   /* study panel: live 3D math graph */
   #mathcv{width:100%;height:120px;display:block}
 
@@ -286,6 +300,49 @@
   #kofi .klabel{font-family:var(--mono);font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:#fff;opacity:.85}
   @media(max-width:760px){#kofi{bottom:18px;left:18px;width:54px;height:54px}}
 
+  /* ---------- Hero headline slides ---------- */
+  .hslides{position:relative}
+  .hslide{display:none}
+  .hslide.active{display:block;animation:slidein .55s cubic-bezier(.22,1,.36,1)}
+  @keyframes slidein{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+  .hctrl{display:flex;align-items:center;gap:18px;margin-top:34px}
+  .harrow{background:none;border:2px solid rgba(217,203,168,.5);color:var(--cream);width:38px;height:38px;font-size:.85rem;cursor:pointer;transition:all .2s}
+  .harrow:hover{background:var(--red);border-color:var(--red)}
+  .hdots{font-family:var(--mono);letter-spacing:6px;color:var(--cream);font-size:.8rem}
+  .hdots b{color:var(--red)}
+
+  /* ---------- Fullscreen code-rain intro ---------- */
+  #matrix{position:fixed;inset:0;z-index:99;background:var(--ink);pointer-events:none}
+
+  /* ---------- Disk shelf + Site Loader 95 ---------- */
+  .disks{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:44px}
+  .disk{font-family:'Press Start 2P',monospace;font-size:.55rem;background:var(--ink);color:var(--cream);border:3px solid var(--ink);padding:12px 14px;cursor:pointer;box-shadow:4px 4px 0 rgba(20,18,16,.3);transition:all .15s}
+  .disk:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(20,18,16,.35);background:var(--red);border-color:var(--red)}
+  #l95{position:fixed;inset:0;z-index:96;background:rgba(20,18,16,.65);display:none;align-items:center;justify-content:center}
+  #l95.open{display:flex}
+  .l95win{width:min(500px,92vw);background:var(--ink);border:3px solid var(--cream);box-shadow:10px 10px 0 rgba(0,0,0,.4)}
+  .l95bar{background:var(--cream);color:var(--ink);font-family:'Press Start 2P',monospace;font-size:.5rem;padding:9px 12px;display:flex;justify-content:space-between;align-items:center}
+  .l95bar button{background:none;border:none;font-family:inherit;font-size:.6rem;cursor:pointer;color:var(--ink)}
+  .l95body{padding:26px 24px;color:var(--cream);font-family:'VT323',monospace;font-size:1.15rem}
+  .l95body .lprog{margin-top:12px}
+  .l95body h4{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:1.6rem;margin-bottom:8px;letter-spacing:.03em}
+  .l95links{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap}
+  .l95links a{font-family:'Press Start 2P',monospace;font-size:.5rem;border:2px solid var(--cream);padding:10px 12px;color:var(--cream)}
+  .l95links a:hover{background:var(--red);border-color:var(--red);text-decoration:none}
+
+  /* ---------- Pixel / retro touches ---------- */
+  #sound,#kofi{border-radius:0;border:3px solid var(--cream);box-shadow:5px 5px 0 rgba(0,0,0,.35)}
+  #sound:hover,#kofi:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 rgba(0,0,0,.4)}
+  .status-chip{border-radius:0}
+  .mailto{border-radius:0;border-width:2px;box-shadow:5px 5px 0 rgba(20,18,16,.25)}
+  .mailto:hover{box-shadow:2px 2px 0 rgba(20,18,16,.3)}
+  .marquee span{font-family:'Press Start 2P',monospace;font-size:.68rem;letter-spacing:.1em}
+  .do .code{font-family:'VT323',monospace;font-size:1.05rem;border-radius:0;border:2px solid var(--cream)}
+  .winbar{display:flex;justify-content:space-between;align-items:center;background:var(--ink);color:var(--cream);font-family:'Press Start 2P',monospace;font-size:.48rem;padding:8px 10px;margin:-32px -28px 20px}
+  .do .plus{top:52px}
+  .hero h1 .red{animation:glitch 7s steps(1) infinite}
+  @keyframes glitch{0%,92%,100%{text-shadow:none}93%{text-shadow:3px 0 rgba(217,203,168,.9),-3px 0 rgba(40,80,255,.8)}95%{text-shadow:-3px 0 rgba(217,203,168,.9),3px 0 rgba(40,80,255,.8)}97%{text-shadow:none}}
+
   footer{padding:26px 44px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;opacity:.7}
   #totop{border:none;background:none;font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink)}
   #totop:hover{color:var(--red)}
@@ -293,10 +350,30 @@
 </head>
 <body>
 
-<div id="loader"><div class="word"><span>GAURANSH ARORA</span></div></div>
+<div id="loader">
+  <div class="lwin">
+    <div class="lbar"><span>GAURANSH.EXE</span><span>_ &#9633; &times;</span></div>
+    <div class="lbody">
+      <div class="word"><span>GAURANSH ARORA</span></div>
+      <div class="ltext" id="ltext">Loading portfolio &hellip;</div>
+      <div class="lprog"><i id="lfill"></i></div>
+    </div>
+  </div>
+</div>
+<canvas id="dots"></canvas>
+<canvas id="matrix"></canvas>
 <script>
   // Failsafe: runs independently of the main script — the loader can never get stuck
   document.documentElement.classList.add('js');
+  (function(){
+    var lf=document.getElementById('lfill'), lt=document.getElementById('ltext'), lp=0;
+    var liv=setInterval(function(){
+      lp=Math.min(100, lp+Math.floor(5+Math.random()*9));
+      if(lf) lf.style.width=lp+'%';
+      if(lt) lt.textContent='Loading portfolio … '+lp+'%';
+      if(lp>=100) clearInterval(liv);
+    },80);
+  })();
   setTimeout(function(){
     var l=document.getElementById('loader');
     if(l) l.classList.add('done');
@@ -309,6 +386,7 @@
 <a id="kofi" href="https://ko-fi.com/gauransharora" target="_blank" rel="noopener" title="Buy Panther a coffee"><span class="cup">&#9749;</span><span class="klabel">Support</span></a>
 <canvas class="sideviz left" id="vizL"></canvas>
 <canvas class="sideviz right" id="vizR"></canvas>
+<div id="l95"><div class="l95win"><div class="l95bar"><span id="l95title">SITE LOADER 95</span><button id="l95x" title="Close">&times;</button></div><div class="l95body" id="l95body"></div></div></div>
 
 <header class="top">
   <div class="inner">
@@ -327,11 +405,16 @@
 <div class="hero">
   <div class="container">
     <span class="label hero-id">Gauransh Arora <span class="dot">&bull;</span> 15 Y/O <span class="dot">&bull;</span> Builder <span class="dot">&bull;</span> India </span>
-    <h1>
-      <span class="line"><span>I LEARN</span></span>
-      <span class="line"><span>BY <span class="red">SHIPPING</span></span></span>
-      <span class="line"><span><span class="serif">things.</span></span></span>
-    </h1>
+    <div class="hslides" id="hslides">
+      <h1 class="hslide active">
+        <span class="line"><span>I LEARN</span></span>
+        <span class="line"><span>BY <span class="red">SHIPPING</span></span></span>
+        <span class="line"><span><span class="serif">things.</span></span></span>
+      </h1>
+      <h1 class="hslide">BUILD. TRAIN.<br><span class="red">SHIP.</span><br><span class="serif">repeat.</span></h1>
+      <h1 class="hslide">CONCEPT &rarr;<br><span class="red">PROJECT</span> &rarr;<br><span class="serif">new concepts.</span></h1>
+    </div>
+    <div class="hctrl"><button class="harrow" id="hprev" title="Previous">&#9668;</button><span class="hdots" id="hdots"></span><button class="harrow" id="hnext" title="Next">&#9658;</button></div>
     <div class="strip">
       <div class="cell">Age<b>15 Y/O</b></div>
       <div class="cell">Base<b>India</b></div>
@@ -339,13 +422,14 @@
       <div class="cell">Off-screen<b>Tennis &middot; Chess</b></div>
       <div class="cell">GitHub<b>PantherHale</b></div>
     </div>
+    <div class="rotator"><span class="pfx">&gt; currently:</span> <span id="rotxt"></span><span class="rcur">_</span></div>
   </div>
   <a class="scroll-hint" href="#about">&darr;</a>
 </div>
 
 <!-- MARQUEE -->
 <div class="marquee"><div class="track" id="mtrack">
-  <span>Machine Learning</span><span>&#9679;</span><span>Reinforcement Learning</span><span>&#9679;</span><span>Python</span><span>&#9679;</span><span>Tennis</span><span>&#9679;</span><span>Chess</span><span>&#9679;</span><span>Shipped: Numdle</span><span>&#9679;</span><span>Building: StudyGraph</span><span>&#9679;</span>
+  <span>Machine Learning</span><span>&#9679;</span><span>Reinforcement Learning</span><span>&#9679;</span><span>Python</span><span>&#9679;</span><span>Tennis</span><span>&#9679;</span><span>Chess</span><span>&#9679;</span><span>Shipped: Numdle</span><span>&#9679;</span><span>Building: Evaluator for Heat</span><span>&#9679;</span>
 </div></div>
 
 <!-- ABOUT -->
@@ -366,13 +450,13 @@
         <div class="fact"><span class="k">Age</span><span class="v">15</span></div>
         <div class="fact"><span class="k">Location</span><span class="v">India</span></div>
         <div class="fact"><span class="k">Sports</span><span class="v">Tennis &middot; Chess</span></div>
-        <div class="fact"><span class="k">Learning</span><span class="v">Math for ML</span></div>
         <div class="fact"><span class="k">GitHub</span><span class="v"><a href="https://github.com/PantherHale" target="_blank">PantherHale</a></span></div>
       </div>
     </div>
 
     <div class="do-grid reveal">
       <div class="do">
+        <div class="winbar"><span>BUILD.EXE</span><span>_ &#9633; &times;</span></div>
         <span class="plus">+</span>
         <span class="label">01 <span class="dot">/</span> I build</span>
         <h3>SHIP <span class="serif">code</span></h3>
@@ -380,19 +464,19 @@
         <div class="more">RL agents, web apps, desktop tools — one project at a time, each one a level up. Tap to close.</div>
       </div>
       <div class="do">
+        <div class="winbar"><span>MATH.EXE</span><span>_ &#9633; &times;</span></div>
         <span class="plus">+</span>
         <span class="label">02 <span class="dot">/</span> I study</span>
         <h3>MATH <span class="serif">daily</span></h3>
         <canvas id="mathcv" width="320" height="120"></canvas>
-        <div class="minibar"><i></i></div>
-        <span class="minibar-cap">Math for ML &middot; calculus in progress</span>
-        <div class="more">1–2 hours of ML math every single day — linear algebra done, calculus in progress, probability next.</div>
+        <div class="more">&ldquo;0.999&hellip; isn&rsquo;t almost 1 &mdash; it <em>is</em> exactly 1. Maths hides its biggest surprises in plain sight.&rdquo;</div>
       </div>
       <div class="do">
+        <div class="winbar"><span>PLAY.EXE</span><span>_ &#9633; &times;</span></div>
         <span class="plus">+</span>
         <span class="label">03 <span class="dot">/</span> I play</span>
         <h3>COURT <span class="serif">&amp; board</span></h3>
-        <div class="court"><div class="racket"></div><div class="ballx"><div class="ball"></div></div><span class="knight">&#9822;</span></div>
+        <div class="court"><div class="racket"></div><div class="ballx"><div class="ball"></div></div><span class="knight" title="Ask the knight">&#9822;</span><span class="bubble" id="kbubble"></span></div>
         <div class="more">Tennis for the body, chess for the mind — same discipline, different arenas.</div>
       </div>
     </div>
@@ -411,6 +495,12 @@
     <div class="sec-head reveal">
       <h2>SELECTED <span class="red">WORK</span></h2>
       <span class="label">02 <span class="dot">/</span> Projects</span>
+    </div>
+
+    <div class="disks reveal">
+      <span class="label">Insert a disk <span class="dot">&#9658;</span></span>
+      <button class="disk" data-proj="numdle">&#128190; NUMDLE.DSK</button>
+      <button class="disk" data-proj="evalheat">&#128190; EVALHEAT.DSK</button>
     </div>
 
     <div class="work-item reveal">
@@ -437,17 +527,14 @@
     <div class="work-item reveal">
       <div class="idx">/02</div>
       <div>
-        <span class="status-chip">In the making</span>
-        <h3>StudyGraph</h3>
-        <p class="desc">A study companion for any student: track your full syllabus against exam dates, digitize handwritten notes with AI, and see it all as a knowledge graph. Currently in the making.</p>
+        <span class="status-chip">In development</span>
+        <h3>Evaluator for Heat</h3>
+        <p class="desc">An engineering project currently in the works. Details drop when it ships — watch this space.</p>
       </div>
       <div>
-        <p class="meta">HTML/JS &middot; IndexedDB &middot; Cytoscape &middot; Gemini API &middot; Electron</p>
+        <p class="meta">Engineering &middot; In development</p>
         <ul>
-          <li>Syllabus tracker with exam countdowns + pace</li>
-          <li>AI OCR: photos of notes &rarr; clean markdown</li>
-          <li>Daily to-dos with rollover, study log, weekly stats</li>
-          <li>Graph view of subjects, chapters &amp; notes</li>
+          <li>Active build — more soon</li>
         </ul>
       </div>
     </div>
@@ -601,7 +688,7 @@
 
   // Hero parallax on mouse
   if(window.matchMedia('(hover:hover)').matches){
-    const h1 = document.querySelector('.hero h1');
+    const h1 = document.getElementById('hslides') || document.querySelector('.hero h1');
     document.querySelector('.hero').addEventListener('mousemove',e=>{
       const dx=(e.clientX/window.innerWidth-.5), dy=(e.clientY/window.innerHeight-.5);
       h1.style.transform=`translate(${dx*14}px,${dy*10}px)`;
@@ -822,6 +909,197 @@
     });
   },{threshold:.4});
   codeIO.observe(codeEl);
+
+  // Letter-scramble hover effect on links
+  const scrChars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&';
+  document.querySelectorAll('nav.menu a, .work-links a').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{
+      if(el._scr) return; el._scr=true;
+      const orig=el.dataset.orig||el.textContent; el.dataset.orig=orig;
+      let f=0;
+      const iv=setInterval(()=>{
+        el.textContent=orig.split('').map((c,i)=> i<f?c:(c===' '?' ':scrChars[Math.floor(Math.random()*scrChars.length)])).join('');
+        if(++f>orig.length){clearInterval(iv);el.textContent=orig;el._scr=false;}
+      },26);
+    });
+  });
+
+  // Hero rotating typewriter status line
+  const rotxt=document.getElementById('rotxt');
+  if(rotxt){
+    const phrases=['building projects','high school'];
+    let pi=0,ci=0,del=false;
+    (function rot(){
+      const p=phrases[pi];
+      rotxt.textContent=p.slice(0,ci);
+      if(!del){ if(++ci>p.length){del=true;setTimeout(rot,1700);return;} }
+      else{ if(--ci===0){del=false;pi=(pi+1)%phrases.length;} }
+      setTimeout(rot, del?30:70);
+    })();
+  }
+
+  // Chess knight oracle — click for a verdict
+  const kn=document.querySelector('.knight'), kb=document.getElementById('kbubble');
+  if(kn&&kb){
+    const knLines=['e4. Always e4.','Build first, doubt later.','One project = one level up.','Checkmate the course loop.','150k episodes. Keep training.','Discipline > motivation.','The board never lies.'];
+    let bt;
+    kn.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      kb.textContent=knLines[Math.floor(Math.random()*knLines.length)];
+      kb.classList.add('show');
+      kn.classList.remove('hopping'); void kn.offsetWidth; kn.classList.add('hopping');
+      clearTimeout(bt); bt=setTimeout(()=>kb.classList.remove('show'),2400);
+    });
+  }
+
+  // Marquee speeds up while you scroll
+  let mto;
+  window.addEventListener('scroll',()=>{
+    mt.style.animationDuration='7s';
+    clearTimeout(mto);
+    mto=setTimeout(()=>{mt.style.animationDuration='22s'},300);
+  },{passive:true});
+
+  // 8-bit click blips
+  let bctx=null;
+  function blip(f){
+    try{
+      if(!bctx) bctx=new (window.AudioContext||window.webkitAudioContext)();
+      const o=bctx.createOscillator(), g=bctx.createGain();
+      o.type='square'; o.frequency.value=f;
+      g.gain.setValueAtTime(.05,bctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,bctx.currentTime+.09);
+      o.connect(g); g.connect(bctx.destination);
+      o.start(); o.stop(bctx.currentTime+.1);
+    }catch(err){}
+  }
+  document.querySelectorAll('a, button, .do').forEach(el=>
+    el.addEventListener('click',()=>blip(480+Math.random()*360)));
+
+  // Hero headline slides with arrows, dots & keyboard
+  const slides=[...document.querySelectorAll('.hslide')];
+  const hdots=document.getElementById('hdots');
+  let hs=0, htimer;
+  function hdraw(){hdots.innerHTML=slides.map((_,j)=> j===hs?'<b>&#9679;</b>':'&#9675;').join(' ');}
+  function hshow(i){
+    slides[hs].classList.remove('active');
+    hs=(i+slides.length)%slides.length;
+    slides[hs].classList.add('active');
+    hdraw();
+  }
+  function hauto(){clearInterval(htimer);htimer=setInterval(()=>hshow(hs+1),5000);}
+  if(slides.length && hdots){
+    hdraw();
+    document.getElementById('hprev').addEventListener('click',()=>{hshow(hs-1);hauto();});
+    document.getElementById('hnext').addEventListener('click',()=>{hshow(hs+1);hauto();});
+    document.addEventListener('keydown',e=>{
+      if(e.key==='ArrowLeft'){hshow(hs-1);hauto();}
+      if(e.key==='ArrowRight'){hshow(hs+1);hauto();}
+    });
+    hauto();
+    // keep every slide the same height so controls don't jump
+    function eqSlides(){
+      let m=0;
+      slides.forEach(s=>{const st=s.style.display;s.style.display='block';m=Math.max(m,s.offsetHeight);s.style.display=st;});
+      document.getElementById('hslides').style.minHeight=m+'px';
+    }
+    eqSlides(); setTimeout(eqSlides,1600); window.addEventListener('resize',eqSlides);
+  }
+
+  // Fullscreen code-rain intro — fades on mouse move or automatically after 5s
+  const mxc=document.getElementById('matrix');
+  if(mxc){
+    const g=mxc.getContext('2d');
+    const glyphs='01<>/{}[]=+*#$%&()GAURANSH.EXE';
+    const fs=16;
+    let cols=[], mgone=false;
+    function msize(){
+      mxc.width=window.innerWidth; mxc.height=window.innerHeight;
+      cols=Array(Math.ceil(mxc.width/fs)).fill(0).map(()=>Math.floor(Math.random()*-40));
+      g.fillStyle='#141210'; g.fillRect(0,0,mxc.width,mxc.height);
+    }
+    msize(); window.addEventListener('resize',()=>{if(!mgone)msize();});
+    const mrain=setInterval(()=>{
+      if(mgone) return;
+      g.fillStyle='rgba(20,18,16,.14)';
+      g.fillRect(0,0,mxc.width,mxc.height);
+      g.font=fs+'px "VT323",monospace';
+      for(let i=0;i<cols.length;i++){
+        const ch=glyphs[Math.floor(Math.random()*glyphs.length)];
+        g.fillStyle = Math.random()<.08 ? '#b6ffc8' : '#00ff41';
+        g.fillText(ch, i*fs, cols[i]*fs);
+        cols[i] = (cols[i]*fs > mxc.height && Math.random()>.975) ? 0 : cols[i]+1;
+      }
+    },50);
+    function mfade(){
+      if(mgone) return; mgone=true;
+      mxc.style.transition='opacity 1.2s';
+      mxc.style.opacity='0';
+      setTimeout(()=>{clearInterval(mrain); mxc.remove();},1300);
+    }
+    // arm the mouse trigger after the loader window slides away
+    setTimeout(()=>{
+      window.addEventListener('mousemove',mfade,{once:true});
+      window.addEventListener('touchstart',mfade,{once:true});
+    },2100);
+    setTimeout(mfade,5000); // auto-fade after 5s no matter what
+  }
+
+  // Site Loader 95 — insert a project disk
+  const l95=document.getElementById('l95'), l95body=document.getElementById('l95body'), l95title=document.getElementById('l95title');
+  const projData={
+    numdle:{t:'NUMDLE.DSK',h:'Numdle &mdash; RL Game',d:'DQN / Double-DQN agent, trained 150,000+ episodes. Playable on the web, deployed on Cloudflare Pages.',links:[['RUN &#9658;','https://numdle-game.pages.dev/'],['SOURCE','https://github.com/PantherHale/number-guessing-rl']]},
+    evalheat:{t:'EVALHEAT.DSK',h:'Evaluator for Heat',d:'Engineering project. STATUS: IN DEVELOPMENT &mdash; no executable on this disk yet.',links:[]}
+  };
+  document.querySelectorAll('.disk').forEach(d=>d.addEventListener('click',()=>{
+    const p=projData[d.dataset.proj]; if(!p) return;
+    l95title.textContent='SITE LOADER 95 — '+p.t;
+    l95.classList.add('open');
+    let pr=0;
+    l95body.innerHTML='Reading disk &hellip; <span id="l95pct">0%</span><div class="lprog"><i id="l95fill"></i></div>';
+    const fi=document.getElementById('l95fill'), pct=document.getElementById('l95pct');
+    const iv=setInterval(()=>{
+      pr=Math.min(100,pr+Math.floor(6+Math.random()*12));
+      fi.style.width=pr+'%'; pct.textContent=pr+'%';
+      if(pr>=100){
+        clearInterval(iv);
+        setTimeout(()=>{
+          l95body.innerHTML='<h4>'+p.h+'</h4><div>'+p.d+'</div><div class="l95links">'+p.links.map(l=>'<a href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>').join('')+'</div>';
+        },250);
+      }
+    },70);
+  }));
+  document.getElementById('l95x').addEventListener('click',()=>l95.classList.remove('open'));
+  l95.addEventListener('click',e=>{if(e.target===l95)l95.classList.remove('open')});
+
+  // Interactive pixel dot-grid background — dots light up red near the mouse
+  const dcv=document.getElementById('dots');
+  if(dcv){
+    const dctx=dcv.getContext('2d');
+    let dmx=-999, dmy=-999;
+    function dsize(){dcv.width=window.innerWidth;dcv.height=window.innerHeight;}
+    dsize(); window.addEventListener('resize',dsize);
+    window.addEventListener('mousemove',e=>{dmx=e.clientX;dmy=e.clientY});
+    (function ddraw(){
+      dctx.clearRect(0,0,dcv.width,dcv.height);
+      const gap=26;
+      for(let x=gap/2;x<dcv.width;x+=gap){
+        for(let y=gap/2;y<dcv.height;y+=gap){
+          const d=Math.hypot(x-dmx,y-dmy);
+          if(d<130){
+            const t=1-d/130;
+            dctx.fillStyle='rgba(227,57,28,'+(0.15+t*.5).toFixed(2)+')';
+            const s=2+t*3;
+            dctx.fillRect(x-s/2,y-s/2,s,s);
+          }else{
+            dctx.fillStyle='rgba(20,18,16,.10)';
+            dctx.fillRect(x-1,y-1,2,2);
+          }
+        }
+      }
+      requestAnimationFrame(ddraw);
+    })();
+  }
 </script>
 
 </body>
